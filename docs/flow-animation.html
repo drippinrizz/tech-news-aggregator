@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>News Flow - Live Animation</title>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/roughjs@4.5.2/bundled/rough.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Caveat', cursive;
+            background: #fffef5;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        h1 {
+            font-size: 4rem;
+            color: #6c5ce7;
+            margin-bottom: 0.5rem;
+            transform: rotate(-1deg);
+        }
+
+        .subtitle {
+            font-size: 2rem;
+            color: #636e72;
+            margin-bottom: 1rem;
+        }
+
+        .container {
+            position: relative;
+            width: 1300px;
+            height: 700px;
+        }
+
+        canvas#bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        svg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 1300px;
+            height: 700px;
+        }
+
+        .ant-path {
+            fill: none;
+            stroke: #2d3436;
+            stroke-width: 3;
+            stroke-dasharray: 12 8;
+            animation: march 0.5s linear infinite;
+        }
+
+        .ant-path.slow {
+            animation-duration: 0.8s;
+        }
+
+        .ant-path.reverse {
+            animation-direction: reverse;
+        }
+
+        @keyframes march {
+            to {
+                stroke-dashoffset: -20;
+            }
+        }
+
+        .pulse {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(253, 121, 168, 0.2);
+            animation: pulse 2s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+                opacity: 0.3;
+            }
+
+            50% {
+                transform: scale(1.15);
+                opacity: 0.6;
+            }
+        }
+
+        .glow {
+            position: absolute;
+            border-radius: 8px;
+            background: rgba(162, 155, 254, 0.3);
+            animation: glow 1.5s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        @keyframes glow {
+
+            0%,
+            100% {
+                opacity: 0.2;
+            }
+
+            50% {
+                opacity: 0.5;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <h1>The News Pipeline</h1>
+    <p class="subtitle">Complete data flow through the system</p>
+
+    <div class="container">
+        <canvas id="bg" width="1300" height="700"></canvas>
+
+        <svg viewBox="0 0 1300 700">
+            <!-- Phase 1: Sources to Scraper (stop at scraper edge) -->
+            <path class="ant-path" d="M 160 100 Q 220 150 270 200" />
+            <path class="ant-path slow" d="M 160 200 L 270 230" />
+            <path class="ant-path" d="M 160 300 Q 220 280 270 260" />
+            <path class="ant-path slow" d="M 160 400 Q 220 360 270 290" />
+
+            <!-- Scraper to Xano DB (stop at DB edge) -->
+            <path class="ant-path" d="M 370 250 L 485 250" />
+
+            <!-- Phase 2: DB to AI Analysis (curves that don't cut through) -->
+            <path class="ant-path" d="M 610 180 Q 680 100 760 200" />
+            <path class="ant-path slow" d="M 610 320 Q 680 400 760 300" style="animation-direction: reverse;" />
+
+            <!-- Phase 3: DB down to filter -->
+            <path class="ant-path slow" d="M 550 345 L 550 510 L 955 510" />
+
+            <!-- Filter to email -->
+            <path class="ant-path" d="M 1055 510 L 1125 510" />
+        </svg>
+
+        <!-- Glowing effects -->
+        <div class="glow" style="left: 490px; top: 160px; width: 120px; height: 180px;"></div>
+        <div class="pulse" style="left: 765px; top: 200px; width: 100px; height: 100px;"></div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('bg');
+        const rc = rough.canvas(canvas);
+
+        // === PHASE 1: SCRAPING ===
+
+        // Source boxes
+        rc.rectangle(30, 60, 130, 70, { roughness: 2, fill: '#ff7675', fillStyle: 'hachure' });
+        rc.rectangle(30, 160, 130, 70, { roughness: 2, fill: '#ffeaa7', fillStyle: 'hachure' });
+        rc.rectangle(30, 260, 130, 70, { roughness: 2, fill: '#74b9ff', fillStyle: 'hachure' });
+        rc.rectangle(30, 360, 130, 70, { roughness: 2, fill: '#55efc4', fillStyle: 'hachure' });
+
+        // Scraper circle
+        rc.circle(320, 250, 90, { roughness: 2, fill: '#dfe6e9', fillStyle: 'hachure' });
+
+        // === CENTRAL: XANO DATABASE ===
+        rc.rectangle(490, 160, 120, 180, { roughness: 2, fill: '#a29bfe', fillStyle: 'hachure' });
+
+        // === PHASE 2: AI ANALYSIS ===
+        rc.circle(815, 250, 100, { roughness: 2, fill: '#fd79a8', fillStyle: 'hachure' });
+
+        // AI Provider boxes (small)
+        rc.rectangle(900, 120, 100, 45, { roughness: 2, fill: '#00b894', fillStyle: 'hachure' });
+        rc.rectangle(900, 180, 100, 45, { roughness: 2, fill: '#00b894', fillStyle: 'hachure' });
+        rc.rectangle(900, 240, 100, 45, { roughness: 2, fill: '#00b894', fillStyle: 'hachure' });
+
+        // Lines to providers
+        rc.line(870, 210, 900, 145, { roughness: 2 });
+        rc.line(870, 250, 900, 205, { roughness: 2 });
+        rc.line(870, 280, 900, 265, { roughness: 2 });
+
+        // === PHASE 3: DIGEST ===
+
+        // Filter triangle
+        rc.polygon([[960, 450], [1050, 510], [960, 570]], { roughness: 2, fill: '#fdcb6e', fillStyle: 'hachure' });
+
+        // Email box
+        rc.rectangle(1130, 450, 140, 120, { roughness: 2, fill: '#55efc4', fillStyle: 'hachure' });
+
+        // (SVG handles the animated paths - no static lines needed)
+
+        // === LABELS ===
+        const ctx = canvas.getContext('2d');
+        ctx.font = '24px Caveat';
+        ctx.fillStyle = '#2d3436';
+
+        // Sources
+        ctx.fillText('HN', 75, 105);
+        ctx.fillText('Reddit', 60, 205);
+        ctx.fillText('RSS', 75, 305);
+        ctx.fillText('Dev.to', 60, 405);
+
+        // Main components
+        ctx.fillText('Scrape', 287, 258);
+
+        ctx.font = '22px Caveat';
+        ctx.fillText('Xano', 525, 240);
+        ctx.fillText('DB', 535, 270);
+
+        ctx.font = '24px Caveat';
+        ctx.fillText('AI', 805, 258);
+
+        // Providers
+        ctx.font = '16px Caveat';
+        ctx.fillText('Anthropic', 920, 150);
+        ctx.fillText('OpenAI', 925, 210);
+        ctx.fillText('Google', 928, 270);
+
+        // Digest
+        ctx.font = '24px Caveat';
+        ctx.fillText('Filter', 975, 518);
+        ctx.fillText('📧 Email', 1165, 520);
+
+        // Phase labels
+        ctx.font = '28px Caveat';
+        ctx.fillStyle = '#6c5ce7';
+        ctx.fillText('① Scrape', 180, 480);
+        ctx.fillText('② Analyze', 750, 400);
+        ctx.fillText('③ Digest', 1050, 620);
+    </script>
+</body>
+
+</html>

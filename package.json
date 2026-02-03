@@ -1,0 +1,43 @@
+{
+  "name": "tech-news-aggregator",
+  "version": "1.0.0",
+  "description": "AI-powered tech news aggregation system with email digests",
+  "main": "dist/index.js",
+  "scripts": {
+    "setup": "tsx scripts/setup.ts",
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "scrape": "tsx src/scraper.ts",
+    "analyze": "tsx src/analyzer.ts",
+    "digest": "tsx src/digest.ts"
+  },
+  "keywords": [
+    "news",
+    "aggregator",
+    "ai",
+    "tech",
+    "email"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.32.1",
+    "@google/generative-ai": "^0.21.0",
+    "axios": "^1.7.9",
+    "cheerio": "^1.0.0",
+    "dotenv": "^16.4.7",
+    "node-cron": "^3.0.3",
+    "nodemailer": "^6.9.17",
+    "openai": "^4.77.0",
+    "rss-parser": "^3.13.0",
+    "snoowrap": "^1.23.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.5",
+    "@types/node-cron": "^3.0.11",
+    "@types/nodemailer": "^6.4.17",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.3"
+  }
+}

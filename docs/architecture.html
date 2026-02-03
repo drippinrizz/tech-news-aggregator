@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tech News Aggregator - The Story</title>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/roughjs@4.5.2/bundled/rough.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Caveat', cursive;
+            background: #fffef5;
+            min-height: 100vh;
+            overflow: hidden;
+        }
+
+        .slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            opacity: 0;
+            transform: translateX(100%);
+            transition: all 0.5s ease;
+            background: #fffef5;
+        }
+
+        .slide.active {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .slide.prev {
+            transform: translateX(-100%);
+        }
+
+        h1 {
+            font-size: 4rem;
+            color: #2d3436;
+            text-align: center;
+            margin-bottom: 1rem;
+            transform: rotate(-2deg);
+        }
+
+        h2 {
+            font-size: 3rem;
+            color: #6c5ce7;
+            margin-bottom: 2rem;
+            transform: rotate(1deg);
+        }
+
+        p {
+            font-size: 2rem;
+            color: #636e72;
+            text-align: center;
+            max-width: 800px;
+            line-height: 1.4;
+        }
+
+        canvas {
+            max-width: 90%;
+            max-height: 60vh;
+        }
+
+        .nav {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 1rem;
+            z-index: 100;
+        }
+
+        .nav button {
+            font-family: 'Caveat', cursive;
+            font-size: 1.5rem;
+            padding: 0.8rem 2rem;
+            border: 3px solid #2d3436;
+            background: #ffeaa7;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            transform: rotate(-1deg);
+        }
+
+        .nav button:hover {
+            background: #fdcb6e;
+            transform: rotate(1deg) scale(1.05);
+        }
+
+        .progress {
+            position: fixed;
+            top: 1rem;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 1.5rem;
+            color: #b2bec3;
+        }
+
+        .emoji {
+            font-size: 5rem;
+            margin: 1rem;
+            animation: bounce 1s infinite;
+        }
+
+        @keyframes bounce {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        .list {
+            font-size: 2rem;
+            text-align: left;
+            line-height: 2;
+        }
+
+        .list li {
+            transform: rotate(-1deg);
+            margin: 0.5rem 0;
+        }
+
+        .list li:nth-child(even) {
+            transform: rotate(1deg);
+        }
+
+        .highlight {
+            background: linear-gradient(to bottom, transparent 60%, #ffeaa7 60%);
+            padding: 0 0.3rem;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Slide 1: Title -->
+    <div class="slide active" id="slide1">
+        <div class="emoji">📰</div>
+        <h1>Tech News Aggregator</h1>
+    </div>
+
+    <!-- Slide 2: The Problem -->
+    <div class="slide" id="slide2">
+        <h2>The Problem</h2>
+        <p>There's <span class="highlight">too much tech news</span> and not enough time!</p>
+        <p>Hacker News... Reddit... Dev.to... RSS feeds...</p>
+    </div>
+
+    <!-- Slide 3: The Solution -->
+    <div class="slide" id="slide3">
+        <h2>The Solution:</h2>
+        <canvas id="canvas3" width="800" height="400"></canvas>
+    </div>
+
+    <!-- Slide 4: Data Sources -->
+    <div class="slide" id="slide4">
+        <h2>We Scrape Everything!</h2>
+        <canvas id="canvas4" width="800" height="400"></canvas>
+    </div>
+
+    <!-- Slide 5: AI Brain -->
+    <div class="slide" id="slide5">
+        <h2>AI Does the Thinking</h2>
+        <canvas id="canvas5" width="800" height="400"></canvas>
+    </div>
+
+    <!-- Slide 6: The Schedule -->
+    <div class="slide" id="slide6">
+        <h2>Runs on Autopilot</h2>
+        <ul class="list">
+            <li>🔄 Every 2 hours → Scrape all sources</li>
+            <li>🤖 After scrape → AI analyzes articles</li>
+            <li>☀️ 9:00 AM → Morning digest email</li>
+            <li>🌙 6:00 PM → Evening digest email</li>
+        </ul>
+    </div>
+
+    <!-- Slide 7: Bulk Operations -->
+    <div class="slide" id="slide7">
+        <h2>Bulk Everything!</h2>
+        <canvas id="canvas7" width="800" height="400"></canvas>
+    </div>
+
+    <!-- Slide 8: The End -->
+    <div class="slide" id="slide8">
+        <div class="emoji">🎯</div>
+        <h1>That's It!</h1>
+        <p>News scraped. AI analyzed. Email delivered.</p>
+        <p style="margin-top: 2rem;">No more FOMO! 🚀</p>
+    </div>
+
+    <div class="nav">
+        <button onclick="prevSlide()">← Back</button>
+        <button onclick="nextSlide()">Next →</button>
+    </div>
+
+    <div class="progress" id="progress">1 / 8</div>
+
+    <script>
+        let currentSlide = 1;
+        const totalSlides = 8;
+
+        function showSlide(n) {
+            document.querySelectorAll('.slide').forEach((slide, i) => {
+                slide.classList.remove('active', 'prev');
+                if (i + 1 === n) slide.classList.add('active');
+                if (i + 1 < n) slide.classList.add('prev');
+            });
+            document.getElementById('progress').textContent = `${n} / ${totalSlides}`;
+        }
+
+        function nextSlide() {
+            if (currentSlide < totalSlides) {
+                currentSlide++;
+                showSlide(currentSlide);
+            }
+        }
+
+        function prevSlide() {
+            if (currentSlide > 1) {
+                currentSlide--;
+                showSlide(currentSlide);
+            }
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') nextSlide();
+            if (e.key === 'ArrowLeft') prevSlide();
+        });
+
+        // Draw scribble diagrams
+        window.onload = function () {
+            // Slide 3: Solution diagram
+            const c3 = document.getElementById('canvas3');
+            const rc3 = rough.canvas(c3);
+
+            // Chaos box
+            rc3.rectangle(50, 150, 150, 100, { roughness: 2, fill: '#ff7675', fillStyle: 'hachure' });
+
+            // AI circle  
+            rc3.circle(400, 200, 80, { roughness: 2, fill: '#a29bfe', fillStyle: 'hachure' });
+
+            // Digest box
+            rc3.rectangle(600, 150, 150, 100, { roughness: 2, fill: '#55efc4', fillStyle: 'hachure' });
+
+            // Arrow from Chaos to AI (stops at circle edge)
+            rc3.line(200, 200, 355, 200, { roughness: 2, strokeWidth: 2 });
+            rc3.polygon([[340, 190], [360, 200], [340, 210]], { fill: '#2d3436', roughness: 1 });
+
+            // Arrow from AI to Digest (starts at circle edge)
+            rc3.line(445, 200, 595, 200, { roughness: 2, strokeWidth: 2 });
+            rc3.polygon([[580, 190], [600, 200], [580, 210]], { fill: '#2d3436', roughness: 1 });
+
+            const ctx3 = c3.getContext('2d');
+            ctx3.font = '24px Caveat';
+            ctx3.fillText('Chaos', 90, 210);
+            ctx3.fillText('AI', 385, 210);
+            ctx3.fillText('Digest', 635, 210);
+
+            // Slide 4: Data sources
+            const c4 = document.getElementById('canvas4');
+            const rc4 = rough.canvas(c4);
+
+            // Source boxes - moved up to fit in canvas
+            rc4.rectangle(50, 30, 120, 50, { roughness: 2, fill: '#ff7675', fillStyle: 'hachure' });
+            rc4.rectangle(50, 110, 120, 50, { roughness: 2, fill: '#ffeaa7', fillStyle: 'hachure' });
+            rc4.rectangle(50, 190, 120, 50, { roughness: 2, fill: '#74b9ff', fillStyle: 'hachure' });
+            rc4.rectangle(50, 270, 120, 50, { roughness: 2, fill: '#55efc4', fillStyle: 'hachure' });
+
+            // Scraper circle
+            rc4.circle(350, 180, 100, { roughness: 2, fill: '#dfe6e9', fillStyle: 'hachure' });
+
+            // Lines from sources to scraper (stop at circle edge)
+            rc4.line(170, 55, 295, 155, { roughness: 2 });
+            rc4.line(170, 135, 295, 170, { roughness: 2 });
+            rc4.line(170, 215, 295, 185, { roughness: 2 });
+            rc4.line(170, 295, 295, 200, { roughness: 2 });
+
+            // Xano DB box
+            rc4.rectangle(500, 130, 180, 100, { roughness: 2, fill: '#a29bfe', fillStyle: 'hachure' });
+
+            // Arrow from scraper to DB (starts at circle edge)
+            rc4.line(405, 180, 495, 180, { roughness: 2, strokeWidth: 2 });
+            rc4.polygon([[480, 170], [500, 180], [480, 190]], { fill: '#2d3436', roughness: 1 });
+
+            const ctx4 = c4.getContext('2d');
+            ctx4.font = '20px Caveat';
+            ctx4.fillText('HN', 95, 62);
+            ctx4.fillText('Reddit', 85, 142);
+            ctx4.fillText('RSS', 95, 222);
+            ctx4.fillText('Dev.to', 85, 302);
+            ctx4.fillText('Scraper', 320, 185);
+            ctx4.fillText('Xano DB', 555, 190);
+
+            // Slide 5: AI Brain
+            const c5 = document.getElementById('canvas5');
+            const rc5 = rough.canvas(c5);
+
+            // Articles box
+            rc5.rectangle(50, 150, 150, 100, { roughness: 2, fill: '#dfe6e9', fillStyle: 'hachure' });
+
+            // AI circle (radius 50, center at 400,200)
+            rc5.circle(400, 200, 100, { roughness: 2, fill: '#fd79a8', fillStyle: 'hachure' });
+
+            // Provider boxes
+            rc5.rectangle(600, 100, 150, 60, { roughness: 2, fill: '#00b894', fillStyle: 'hachure' });
+            rc5.rectangle(600, 180, 150, 60, { roughness: 2, fill: '#00b894', fillStyle: 'hachure' });
+            rc5.rectangle(600, 260, 150, 60, { roughness: 2, fill: '#00b894', fillStyle: 'hachure' });
+
+            // Arrow from Articles to AI (stops at circle edge)
+            rc5.line(200, 200, 345, 200, { roughness: 2, strokeWidth: 2 });
+            rc5.polygon([[330, 190], [350, 200], [330, 210]], { fill: '#2d3436', roughness: 1 });
+
+            // Lines from AI to providers (start at circle edge)
+            rc5.line(455, 175, 600, 130, { roughness: 2 });
+            rc5.line(455, 200, 600, 210, { roughness: 2 });
+            rc5.line(455, 225, 600, 290, { roughness: 2 });
+
+            const ctx5 = c5.getContext('2d');
+            ctx5.font = '20px Caveat';
+            ctx5.fillText('Articles', 90, 210);
+            ctx5.fillText('AI', 390, 207);
+            ctx5.fillText('Anthropic', 640, 140);
+            ctx5.fillText('OpenAI', 650, 220);
+            ctx5.fillText('Google', 655, 300);
+
+            // Slide 7: Bulk operations
+            const c7 = document.getElementById('canvas7');
+            const rc7 = rough.canvas(c7);
+
+            // Small boxes going into big box
+            for (let i = 0; i < 5; i++) {
+                rc7.rectangle(50 + i * 30, 100 + i * 20, 40, 40, { roughness: 2, fill: '#74b9ff', fillStyle: 'hachure' });
+            }
+
+            rc7.line(220, 200, 350, 200, { roughness: 2, strokeWidth: 3 });
+            rc7.polygon([[320, 180], [350, 200], [320, 220]], { fill: '#2d3436' });
+
+            rc7.rectangle(380, 100, 200, 200, { roughness: 2, fill: '#55efc4', fillStyle: 'hachure' });
+
+            rc7.line(600, 200, 700, 200, { roughness: 2, strokeWidth: 3 });
+            rc7.polygon([[670, 180], [700, 200], [670, 220]], { fill: '#2d3436' });
+
+            rc7.ellipse(750, 200, 80, 100, { roughness: 2, fill: '#a29bfe', fillStyle: 'hachure' });
+
+            const ctx7 = c7.getContext('2d');
+            ctx7.font = '20px Caveat';
+            ctx7.fillText('Many', 100, 250);
+            ctx7.fillText('BULK!', 450, 210);
+            ctx7.fillText('DB', 735, 210);
+        };
+    </script>
+</body>
+
+</html>
