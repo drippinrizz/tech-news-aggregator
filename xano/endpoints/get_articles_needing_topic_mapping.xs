@@ -7,10 +7,17 @@ query get_articles_needing_topic_mapping verb=GET {
   api_group = "Topics"
 
   input {
+    // API key for authentication
+    text api_key
+
     int limit?=200
   }
 
   stack {
+    function.run "auth/verify_api_key" {
+      input = {api_key: $input.api_key}
+    }
+
     db.query articles {
       where = $db.articles.analyzed && $db.articles.topics != null && $db.articles.topics != ""
       sort = {created_at: "desc"}

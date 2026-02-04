@@ -7,6 +7,9 @@ query create_digest_log verb=POST {
   api_group = "Topics"
 
   input {
+    // API key for authentication
+    text api_key
+
     text digest_type
     int article_count
     bool success?=true
@@ -14,6 +17,10 @@ query create_digest_log verb=POST {
   }
 
   stack {
+    function.run "auth/verify_api_key" {
+      input = {api_key: $input.api_key}
+    }
+
     db.add digest_log {
       data = {
         digest_type  : $input.digest_type

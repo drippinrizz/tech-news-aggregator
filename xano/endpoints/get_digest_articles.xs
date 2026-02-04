@@ -7,12 +7,19 @@ query get_digest_articles verb=GET {
   api_group = "Topics"
 
   input {
+    // API key for authentication
+    text api_key
+
     timestamp start_time
     int min_relevance_score?=7
     int limit?=20
   }
 
   stack {
+    function.run "auth/verify_api_key" {
+      input = {api_key: $input.api_key}
+    }
+
     db.query articles {
       where = $db.articles.analyzed && $db.articles.should_comment && $db.articles.relevance_score >= $input.min_relevance_score && $db.articles.included_in_digest == false && $db.articles.created_at >= $input.start_time
       sort = {relevance_score: "desc"}

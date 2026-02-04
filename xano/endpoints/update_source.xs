@@ -7,11 +7,18 @@ query update_source verb=PATCH {
   api_group = "Topics"
 
   input {
+    // API key for authentication
+    text api_key
+
     int source_id
     timestamp last_scraped?=now
   }
 
   stack {
+    function.run "auth/verify_api_key" {
+      input = {api_key: $input.api_key}
+    }
+
     db.edit sources {
       field_name = "id"
       field_value = $input.source_id

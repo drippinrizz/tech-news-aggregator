@@ -3,7 +3,16 @@ import xanoClient from '../database/xano-client';
 import { TopicExtractor, ExistingTopic } from '../analyzers/topic-extractor';
 import { TopicAnalysis } from '../types';
 
-const XANO_API_URL = process.env.XANO_API_URL || '';
+// Normalize URL to always have https:// prefix
+function normalizeApiUrl(url: string): string {
+  if (!url) return '';
+  // Remove any existing protocol
+  let cleanUrl = url.replace(/^https?:\/\//, '');
+  // Add https://
+  return `https://${cleanUrl}`;
+}
+
+const XANO_API_URL = normalizeApiUrl(process.env.XANO_API_URL || '');
 const XANO_AUTH_TOKEN = process.env.XANO_AUTH_TOKEN || '';
 const XANO_API_KEY = process.env.XANO_API_KEY || '';
 

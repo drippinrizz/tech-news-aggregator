@@ -7,10 +7,17 @@ query sync_topics verb=POST {
   api_group = "Topics"
 
   input {
+    // API key for authentication
+    text api_key
+
     json topics
   }
 
   stack {
+    function.run "auth/verify_api_key" {
+      input = {api_key: $input.api_key}
+    }
+
     var $results {
       value = []
     }

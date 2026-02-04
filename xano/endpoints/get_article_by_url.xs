@@ -7,10 +7,17 @@ query get_article_by_url verb=GET {
   api_group = "Topics"
 
   input {
+    // API key for authentication
+    text api_key
+
     text url
   }
 
   stack {
+    function.run "auth/verify_api_key" {
+      input = {api_key: $input.api_key}
+    }
+
     db.query articles {
       where = $db.articles.url == $input.url
       return = {type: "single"}

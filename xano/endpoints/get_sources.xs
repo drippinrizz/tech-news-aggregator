@@ -7,10 +7,17 @@ query get_sources verb=GET {
   api_group = "Topics"
 
   input {
+    // API key for authentication
+    text api_key
+
     bool enabled?=true
   }
 
   stack {
+    function.run "auth/verify_api_key" {
+      input = {api_key: $input.api_key}
+    }
+
     db.query sources {
       where = $db.sources.enabled == $input.enabled
       return = {type: "list", paging: {page: 1, per_page: 100}}

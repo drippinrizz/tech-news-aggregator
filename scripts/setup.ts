@@ -140,11 +140,15 @@ function readXsFiles(dir: string): { name: string; content: string }[] {
   const files: { name: string; content: string }[] = [];
   if (!fs.existsSync(dir)) return files;
 
-  for (const file of fs.readdirSync(dir)) {
-    if (file.endsWith('.xs')) {
+  for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+    if (entry.isDirectory()) {
+      // Recurse into subdirectories (e.g., functions/auth/)
+      const subFiles = readXsFiles(path.join(dir, entry.name));
+      files.push(...subFiles);
+    } else if (entry.name.endsWith('.xs')) {
       files.push({
-        name: file.replace('.xs', ''),
-        content: fs.readFileSync(path.join(dir, file), 'utf-8'),
+        name: entry.name.replace('.xs', ''),
+        content: fs.readFileSync(path.join(dir, entry.name), 'utf-8'),
       });
     }
   }
@@ -447,6 +451,22 @@ async function createXanoResources(config: XanoConfig, ai: AIProviderConfig): Pr
     throw new Error(`Failed to create API group: ${e.message}`);
   }
 
+  // Functions (must be created before endpoints that reference them)
+  console.log('\nCreating functions...');
+  const functions = readXsFiles(path.join(XANO_DIR, 'functions'));
+  for (const fn of functions) {
+    try {
+      await xanoXsRequest(config, '/function', fn.content);
+      console.log(`  ✓ ${fn.name}`);
+    } catch (e: any) {
+      if (e.message.includes('already exists')) {
+        console.log(`  ⚠ ${fn.name} (exists)`);
+      } else {
+        console.log(`  ✗ ${fn.name}: ${e.message}`);
+      }
+    }
+  }
+
   // Endpoints
   console.log('\nCreating endpoints...');
   const endpoints = readXsFiles(path.join(XANO_DIR, 'endpoints'));
@@ -512,22 +532,6 @@ async function createXanoResources(config: XanoConfig, ai: AIProviderConfig): Pr
       console.log(`  ⚠ Blog Post Generator (exists)`);
     } else {
       console.log(`  ✗ Blog Post Generator: ${e.message}`);
-    }
-  }
-
-  // Functions
-  console.log('\nCreating functions...');
-  const functions = readXsFiles(path.join(XANO_DIR, 'functions'));
-  for (const fn of functions) {
-    try {
-      await xanoXsRequest(config, '/function', fn.content);
-      console.log(`  ✓ ${fn.name}`);
-    } catch (e: any) {
-      if (e.message.includes('already exists')) {
-        console.log(`  ⚠ ${fn.name} (exists)`);
-      } else {
-        console.log(`  ✗ ${fn.name}: ${e.message}`);
-      }
     }
   }
 

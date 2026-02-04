@@ -7,6 +7,9 @@ query update_article verb=PATCH {
   api_group = "Topics"
 
   input {
+    // API key for authentication
+    text api_key
+
     int article_id
     bool analyzed?
     int relevance_score?
@@ -19,6 +22,10 @@ query update_article verb=PATCH {
   }
 
   stack {
+    function.run "auth/verify_api_key" {
+      input = {api_key: $input.api_key}
+    }
+
     db.query articles {
       where = $db.articles.id == $input.article_id
       return = {type: "single"}

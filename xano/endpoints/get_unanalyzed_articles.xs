@@ -7,10 +7,17 @@ query get_unanalyzed_articles verb=GET {
   api_group = "Topics"
 
   input {
+    // API key for authentication
+    text api_key
+
     int limit?=50
   }
 
   stack {
+    function.run "auth/verify_api_key" {
+      input = {api_key: $input.api_key}
+    }
+
     db.query articles {
       where = $db.articles.analyzed == false
       sort = {published_at: "desc"}

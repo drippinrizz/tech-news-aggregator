@@ -7,6 +7,9 @@ query upsert_source verb=POST {
   api_group = "Topics"
 
   input {
+    // API key for authentication
+    text api_key
+
     text name
     text type
     text url?
@@ -14,6 +17,10 @@ query upsert_source verb=POST {
   }
 
   stack {
+    function.run "auth/verify_api_key" {
+      input = {api_key: $input.api_key}
+    }
+
     db.query sources {
       where = $db.sources.name == $input.name
       return = {type: "single"}

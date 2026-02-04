@@ -1,6 +1,13 @@
 import 'dotenv/config';
 
-const XANO_API_URL = process.env.XANO_API_URL || '';
+// Normalize URL to always have https:// prefix
+function normalizeApiUrl(url: string): string {
+  if (!url) return '';
+  let cleanUrl = url.replace(/^https?:\/\//, '');
+  return `https://${cleanUrl}`;
+}
+
+const XANO_API_URL = normalizeApiUrl(process.env.XANO_API_URL || '');
 const XANO_API_KEY = process.env.XANO_API_KEY || '';
 
 function xanoHeaders(): Record<string, string> {

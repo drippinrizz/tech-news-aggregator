@@ -7,11 +7,18 @@ query articles_by_topic verb=GET {
   api_group = "Topics"
 
   input {
+    // API key for authentication
+    text api_key
+
     int major_topic_id
     json minor_topic_ids?
   }
 
   stack {
+    function.run "auth/verify_api_key" {
+      input = {api_key: $input.api_key}
+    }
+
     // Query articles with matching major_topic
     db.query articles {
       where = $db.articles.major_topic == $input.major_topic_id
