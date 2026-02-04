@@ -159,7 +159,12 @@ function readXsFiles(dir: string): { name: string; content: string }[] {
 // Xano API Functions
 // ─────────────────────────────────────────────────────────────────────────────
 
+// Rate limit: Xano free tier allows 10 requests per 20 seconds (1 req every 2s)
+const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+const RATE_LIMIT_DELAY_MS = 2000;
+
 async function xanoRequest(config: XanoConfig, endpoint: string, method = 'GET', body?: any) {
+  await sleep(RATE_LIMIT_DELAY_MS);
   const url = `${config.baseUrl}/api:meta/workspace/${config.workspaceId}${endpoint}`;
   const response = await fetch(url, {
     method,
@@ -178,6 +183,7 @@ async function xanoRequest(config: XanoConfig, endpoint: string, method = 'GET',
 }
 
 async function xanoXsRequest(config: XanoConfig, endpoint: string, xanoscript: string) {
+  await sleep(RATE_LIMIT_DELAY_MS);
   const url = `${config.baseUrl}/api:meta/workspace/${config.workspaceId}${endpoint}`;
   const response = await fetch(url, {
     method: 'POST',
@@ -196,6 +202,7 @@ async function xanoXsRequest(config: XanoConfig, endpoint: string, xanoscript: s
 }
 
 async function xanoInstanceRequest(baseUrl: string, apiKey: string, endpoint: string) {
+  await sleep(RATE_LIMIT_DELAY_MS);
   const url = `${baseUrl}/api:meta${endpoint}`;
   const response = await fetch(url, {
     method: 'GET',
