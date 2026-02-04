@@ -30,11 +30,15 @@ The setup wizard walks you through everything:
 
 After collecting your info, the wizard automatically creates all Xano resources:
 - 7 database tables
-- 1 API group with 17 endpoints
+- 1 API group with 19 endpoints (all secured with API key auth)
 - 5 AI tools + 1 AI agent (Blog Post Generator)
-- 2 functions + 1 scheduled task
+- 3 functions (including `auth/verify_api_key`) + 1 scheduled task
 
-It also generates your `.env` file with all the values you entered — no manual editing needed.
+It also generates your `.env` file with all the values you entered.
+
+> **Important:** After setup completes, you must add two environment variables in Xano manually. Go to **Your Workspace > Settings > Environment Variables** and add:
+> 1. `API_KEY` — set to the value shown in the setup output (used by all endpoints for authentication)
+> 2. `AI_PROVIDER_API_KEY` — set to your AI provider key (used by the Blog Post Generator agent)
 
 ### Run
 
